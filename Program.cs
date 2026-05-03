@@ -7,8 +7,8 @@ public static class Program {
             Console.WriteLine("Usage: dotnet run <file-name>");
             return;
         }
-        string sourceCode = File.ReadAllText(args[0]);
-        var lexer = new Lexer(args[0], sourceCode);
+        
+        var lexer = new Lexer(FileName: args[0]);
         var i=1;
         for (var token = lexer.Next(); token != null; token = lexer.Next()) {
             System.Console.WriteLine("{0,3} {1,-15} [{2,2} / {3,2}] : {4}",i++, token.Type, token.Row, token.Column, token.Content);
@@ -16,7 +16,7 @@ public static class Program {
 
         // string s = "123";
         // for(int i=0;i<s.Length;++i) {
-        //     System.Console.WriteLine((s[i] - '0') * 2);            
+        //     System.Console.WriteLine((s[i] - '0') * 2);
         // }
     }
 }

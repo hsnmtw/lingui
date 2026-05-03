@@ -20,16 +20,25 @@ public enum TokenType {
 
 public record Token (int Row, int Column,string Content, TokenType Type);
 
-public record class Lexer (string fileName, string sourceCode) {
+public record class Lexer (string FileName) {
+    private readonly string sourceCode = File.ReadAllText(FileName);
+
     public int Position { get; private set; }
     public int Column { get; private set; }
     public int Row { get; private set; }
+
+    public int Length => sourceCode.Length;
+
+    public void SetPosition(int position) {
+        if (position<0 || position>=Length) return;
+        Position = position;
+    }
 
     private const char NEW_LINE = '\n';
 
     public Token? Next() {
         
-        Logger.AssertIsNotNull(sourceCode, $"[{fileName}] Source code cannot be null");
+        Logger.AssertIsNotNull(sourceCode, $"[{FileName}] Source code cannot be null");
 
         if (Position >= sourceCode.Length) return null;        
         
@@ -55,6 +64,9 @@ public record class Lexer (string fileName, string sourceCode) {
             if (c == '"') {
                 //look for closing '"'
                 while (++i < sourceCode.Length && sourceCode[i] != '"') Column++;
+                if (sourceCode[i] != '"') {
+                    Logger.Error($"unterminated string at {FileName}:{Row}", fail: true);
+                }
                 Position=i;
                 break;
             }
@@ -68,29 +80,36 @@ public record class Lexer (string fileName, string sourceCode) {
         string content = sourceCode[start..++Position];
 
         if (content.Trim().Length == 0) return null;
+
+        var type = TokenType.IDENTIFIER;
         
-        if (content == "fn")      return new Token(Row, _column, content, TokenType.FN        );
-        if (content == "program") return new Token(Row, _column, content, TokenType.PROGRAM   );
-        if (IsString(content[0])) return new Token(Row, _column, content, TokenType.STRING    );
-        if (IsNumber(content[0])) return new Token(Row, _column, content, TokenType.NUMBER    );
-        if (content == "var")     return new Token(Row, _column, content, TokenType.VAR       );
-        if (content == ",")       return new Token(Row, _column, content, TokenType.COMMA     );
-        if (content == "print")   return new Token(Row, _column, content, TokenType.PRINT     );
-        if (content == "input")   return new Token(Row, _column, content, TokenType.INPUT     );
-        if (content == "*")       return new Token(Row, _column, content, TokenType.MULTIPLY  );
-        if (content == "+")       return new Token(Row, _column, content, TokenType.PLUS      );
-        if (content == "-")       return new Token(Row, _column, content, TokenType.MINUS     );
-        if (content == "/")       return new Token(Row, _column, content, TokenType.DIVIDE    );
-        if (content == "=")       return new Token(Row, _column, content, TokenType.EQUALS    );
-        if (content == "end")     return new Token(Row, _column, content, TokenType.END       );    
-                                  return new Token(Row, _column, content, TokenType.IDENTIFIER);
+        if (content == "fn")      type = TokenType.FN       ;
+        if (content == "program") type = TokenType.PROGRAM  ;
+        if (IsString(content)) type = TokenType.STRING   ;
+        if (IsNumber(content)) type = TokenType.NUMBER   ;
+        if (content == "var")     type = TokenType.VAR      ;
+        if (content == ",")       type = TokenType.COMMA    ;
+        if (content == "print")   type = TokenType.PRINT    ;
+        if (content == "input")   type = TokenType.INPUT    ;
+        if (content == "*")       type = TokenType.MULTIPLY ;
+        if (content == "+")       type = TokenType.PLUS     ;
+        if (content == "-")       type = TokenType.MINUS    ;
+        if (content == "/")       type = TokenType.DIVIDE   ;
+        if (content == "=")       type = TokenType.EQUALS   ;
+        if (content == "end")     type = TokenType.END      ;  
+        
+        return new Token(Row, _column, content, type);
     }
 
-    public static bool IsString(char c) {
-        return c == '"';
+    public static bool IsString(string content) {
+        return content.Length >= 2 
+            && content[0] == '"'
+            && content[^1] == '"'
+            ;
     }
 
-    public static bool IsNumber(char c) {
-        return (c >= '0' && c <= '9') || c == '.';
+    public static bool IsNumber(string content) {
+        //return (c >= '0' && c <= '9') || c == '.';
+        return double.TryParse(content, out _);
     }
 }
