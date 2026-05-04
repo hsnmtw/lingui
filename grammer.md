@@ -1,35 +1,46 @@
 BNF
 =====
+```
+<program> ::=
 
-{program} :=
+    program <identifer>
+        <function>*
 
-    program {identifer}
-        {function}*
 
-{function} :=
-    fn {identifier}
-        {statement}*
+
+<function> ::=
+
+    fn <identifier>
+        <statement>*
     end fn
 
-{statement} :=
-    {declaration}
+
+
+<statement> ::=
+
+    <declaration>
     |
-    {expression}
+    <expression>
     |
-    {instrction}
+    <instrction>
 
-{declaration} :=
-    var {identifier}[,{identifer}]*
 
-{instruction} := 
-    input {identifer}
+
+<declaration> ::=
+
+    var <identifier>[,<identifer>]*
+
+
+
+<instruction> ::= 
+
+    input <identifer>
     |
-    print {string}|{identifier} [, {string}|{identifier}]*
-
-{expression} :=
-    {identifer} = [{number}|{identifer}] [+|-|*|/] [{number}|{identifer}]
+    print <string>|<identifier> [, <string>|<identifier>]*
 
 
 
+<expression> ::=
 
-
+    <identifer> = [<number>|<identifer>] [+|-|*|/] [<number>|<identifer>]
+```
