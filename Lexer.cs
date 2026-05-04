@@ -16,7 +16,8 @@ public enum TokenType {
     EQUALS,
     END,
     IDENTIFIER,
-    NEW_LINE
+    NEW_LINE,
+    CONST
 }
 
 public record Token (int Row, int Column,string Content, TokenType Type);
@@ -91,6 +92,7 @@ public record class Lexer (string FileName) {
         if (IsString(content))    type = TokenType.STRING   ;
         if (IsNumber(content))    type = TokenType.NUMBER   ;
         if (content == "var")     type = TokenType.VAR      ;
+        if (content == "const")   type = TokenType.CONST    ;
         if (content == ",")       type = TokenType.COMMA    ;
         if (content == "print")   type = TokenType.PRINT    ;
         if (content == "input")   type = TokenType.INPUT    ;

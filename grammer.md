@@ -28,7 +28,9 @@ BNF
 
 <declaration> ::=
 
-    var <identifier>[,<identifer>]*
+    var <identifier>[ = <value>] [,<identifer> [ = <value>]]*
+    |
+    const <identifier> = <value>
 
 
 
@@ -42,5 +44,5 @@ BNF
 
 <expression> ::=
 
-    <identifer> = [<number>|<identifer>] [+|-|*|/] [<number>|<identifer>]
+    <identifer> = <number>|<identifer> [[+|-|*|/] [<number>|<identifer>]]*
 ```
