@@ -16,8 +16,9 @@ public enum TokenType {
     EQUALS,
     END,
     IDENTIFIER,
-    NEW_LINE,
-    CONST
+    // NEW_LINE,
+    // CONST,
+    SEMI_COLON
 }
 
 public record Token (int Row, int Column,string Content, TokenType Type);
@@ -53,7 +54,7 @@ public record class Lexer (string FileName) {
                 Column = 0;
                 Row++;
                 Position++;
-                return new Token(Row, Column, "\\n", TokenType.NEW_LINE);
+                //return new Token(Row, Column, "\\n", TokenType.NEW_LINE);
             }
             if (!char.IsWhiteSpace(c)) {
                 break;
@@ -92,7 +93,7 @@ public record class Lexer (string FileName) {
         if (IsString(content))    type = TokenType.STRING   ;
         if (IsNumber(content))    type = TokenType.NUMBER   ;
         if (content == "var")     type = TokenType.VAR      ;
-        if (content == "const")   type = TokenType.CONST    ;
+        // if (content == "const")   type = TokenType.CONST    ;
         if (content == ",")       type = TokenType.COMMA    ;
         if (content == "print")   type = TokenType.PRINT    ;
         if (content == "input")   type = TokenType.INPUT    ;
@@ -102,6 +103,7 @@ public record class Lexer (string FileName) {
         if (content == "/")       type = TokenType.DIVIDE   ;
         if (content == "=")       type = TokenType.EQUALS   ;
         if (content == "end")     type = TokenType.END      ;  
+        if (content == ";")     type = TokenType.SEMI_COLON;  
         
         return new Token(Row, _column, content, type);
     }

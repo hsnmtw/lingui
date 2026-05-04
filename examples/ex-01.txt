@@ -1,8 +1,8 @@
 program first
     fn main
-        var n,d
-        print "Enter a number"
-        input n
-        d = n * 2
-        print "the double of ", n, " is ", d
+        var n,d;
+        print "Enter a number";
+        input n;
+        d = n * 2;
+        print "the double of ", n, " is ", d;
     end fn

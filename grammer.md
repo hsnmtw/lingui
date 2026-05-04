@@ -28,11 +28,13 @@ BNF
 
 <declaration> ::=
 
-    var <identifier>[ = <value>] [,<identifer> [ = <value>]]*
-    |
-    const <identifier> = <value>
+    var <identifier> = <value> 
+    /// [,<identifer> [ = <value>]]*
+    /// |
+    /// const <identifier> = <value> [,<identifer> [ = <value>]]*
 
-
+<value> ::=
+    number
 
 <instruction> ::= 
 

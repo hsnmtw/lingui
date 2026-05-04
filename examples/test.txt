@@ -1,0 +1,4 @@
+program first
+    fn main
+        var n = 1
+    end fn
