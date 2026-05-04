@@ -75,7 +75,7 @@ public record class Lexer (string FileName) {
                 Position=i;
                 break;
             }
-            if (char.IsWhiteSpace(c) || c == ',') {
+            if (char.IsWhiteSpace(c) || c == ',' || c == ';') {
                 break;
             }
             Column++;
@@ -103,7 +103,7 @@ public record class Lexer (string FileName) {
         if (content == "/")       type = TokenType.DIVIDE   ;
         if (content == "=")       type = TokenType.EQUALS   ;
         if (content == "end")     type = TokenType.END      ;  
-        if (content == ";")     type = TokenType.SEMI_COLON;  
+        if (content == ";")       type = TokenType.SEMI_COLON;  
         
         return new Token(Row, _column, content, type);
     }

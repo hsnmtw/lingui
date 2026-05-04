@@ -1,4 +1,7 @@
 program first
     fn main
-        var n = 1
+        var n = 1;
+        var a = 5;
+
+        print 10;
     end fn

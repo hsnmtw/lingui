@@ -40,9 +40,13 @@ BNF
 
     input <identifer>
     |
-    print <string>|<identifier> [, <string>|<identifier>]*
+    print <identifier>|<constant>
+    ///[, <string>|<identifier>]*
 
-
+<constant> ::=
+    <number> 
+    | 
+    <string>
 
 <expression> ::=
 

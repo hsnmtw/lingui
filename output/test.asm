@@ -1,12 +1,11 @@
 format ELF64 executable
 use64
-
 entry main
+; stdio.lingui
 
 SYS_READ  = 0
 SYS_WRITE = 1
 SYS_EXIT  = 60
-
 FD_STDIN  = 0
 FD_STDOUT = 1
 FD_STDERR = 2
@@ -18,29 +17,25 @@ macro error str, len {
     mov rdx, len
     syscall
 }
-
-macro write str, len {
+macro print str, len {
     mov rax, SYS_WRITE
     mov rdi, FD_STDOUT
     mov rsi, str
     mov rdx, len
     syscall
 }
-
 macro input str, len {
     mov rax, SYS_READ
     mov rdi, FD_STDIN
     mov rsi, str
     mov rdx, len
     syscall
-}
-
+} 
 macro exit code {
     mov rax, SYS_EXIT
     mov rdi, code
     syscall
 }
-
 ; -----------------------------------------------------------
 ; atoi: convert ASCII string at [buffer] into integer in rax
 ;   - reads until non-digit or null/newline
@@ -110,38 +105,18 @@ macro itoa src,_out_buf, _out_len {
     .done:
     ; -----------------------------------------------------------
 }
-
+; program first
 main:
-    write message, message_len
-
-    input buffer, 32
-
-    ; rax = integer value from input
-    atoi rax, buffer
-
-    ; rax = rax * 2  (same as: shl  rax, 1)
-    add rax, rax         
-
-    ; writes ASCII result to out_buf
-    itoa rax, out_buf, out_len
-
-    write ack, ack_len
-    write out_buf, [out_len]
-    write newline, 1
-
-    exit 0
-
+mov R8, 1
+mov R9, 5
+  mov r15,10
+  itoa r15,out_buf, out_len
+  print out_buf, out_len
+print newline,1
+exit 0
 ; -----------------------------------------------------------
 segment readable writeable
 buffer:      rb 32
 out_buf:     rb 32
 out_len:     dq 0
-
-message:     db "Enter a number: "
-message_len  = $ - message
-
-ack:         db "Doubled: "
-ack_len      = $ - ack
-
 newline:     db 10
-
