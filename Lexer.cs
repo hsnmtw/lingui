@@ -16,6 +16,7 @@ public enum TokenType {
     EQUALS,
     END,
     IDENTIFIER,
+    NEW_LINE
 }
 
 public record Token (int Row, int Column,string Content, TokenType Type);
@@ -50,6 +51,8 @@ public record class Lexer (string FileName) {
             if (c == NEW_LINE) {
                 Column = 0;
                 Row++;
+                Position++;
+                return new Token(Row, Column, "\\n", TokenType.NEW_LINE);
             }
             if (!char.IsWhiteSpace(c)) {
                 break;
@@ -85,8 +88,8 @@ public record class Lexer (string FileName) {
         
         if (content == "fn")      type = TokenType.FN       ;
         if (content == "program") type = TokenType.PROGRAM  ;
-        if (IsString(content)) type = TokenType.STRING   ;
-        if (IsNumber(content)) type = TokenType.NUMBER   ;
+        if (IsString(content))    type = TokenType.STRING   ;
+        if (IsNumber(content))    type = TokenType.NUMBER   ;
         if (content == "var")     type = TokenType.VAR      ;
         if (content == ",")       type = TokenType.COMMA    ;
         if (content == "print")   type = TokenType.PRINT    ;
