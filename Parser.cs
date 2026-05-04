@@ -2,14 +2,8 @@ namespace lingui;
 
 public static class Parser {
     public static string[] Parse(Lexer lexer) {
-        Token? token = lexer.Next();
-        if (token == null) {
-            Logger.Error("reached end of lexer", fail:true);
-            return [];
-        }
-        if (token.Type != TokenType.PROGRAM) {
-            Logger.Error($"expected prgram at {lexer.FileName}:{lexer.Row}:{lexer.Column}, but got {token.Type} : '{token.Content}'", fail:true);
-        }
+        Expect(lexer, TokenType.PROGRAM);
+
         return [
             "format ELF64 executable",
             "use64",
@@ -144,28 +138,17 @@ public static class Parser {
     }
 
     public static string[] ParseFunctions(Lexer lexer) {
-        Token? token = lexer.Next();
-        if (token == null) {
-            Logger.Error("[ParseFunctions] reached end of lexer", fail:true);
-            return [];
-        }
-
-        // System.Console.WriteLine("--------------------------");
-        // System.Console.WriteLine(token);
-        // System.Console.WriteLine("--------------------------");
-
+        Token? token = Expect(lexer, TokenType.FN);
 
         List<string> result = [];
         while (token != null && token.Type == TokenType.FN) {
             result.AddRange(ParseFunction(lexer));
-            // int position = lexer.Position;
             token = lexer.Next();
-            // lexer.SetPosition(position);
         }
         return [..result];
     }
 
-    private static string[] REGISTERS = [
+    private static readonly string[] REGISTERS = [
         "R8",
         "R9",
         "R10",
@@ -177,14 +160,8 @@ public static class Parser {
     ];
 
     public static string[] ParseFunction(Lexer lexer) {
-        //System.Console.WriteLine("/////////////////////////////");
-        // Token? token = lexer.Next();
-        // if (token == null) return [];
-        // if (token.Type != TokenType.FN) {
-        //     Logger.Error($"expected fn at {lexer.FileName}:{lexer.Row}:{lexer.Column}, but got {token.Type} : '{token.Content}'", fail:true);
-        // }
+        
         Token? token = Expect(lexer, TokenType.IDENTIFIER);
-        if (token is null) return [];
 
         Dictionary<string,string> var_map = [];
         int var_index = 0;
@@ -196,14 +173,7 @@ public static class Parser {
             switch(token.Type) {
                 //case TokenType.CONST:
                 case TokenType.VAR: {
-                    token = lexer.Next();
-                    if (token == null) {
-                        Logger.Error("[ParseFunction/2] reached end of lexer", fail:true);
-                        return [];
-                    }
-                    if (token.Type != TokenType.IDENTIFIER) {
-                        Logger.Error($"expected identifier at {lexer.FileName}:{lexer.Row}:{lexer.Column}, but got {token.Type} : '{token.Content}'", fail:true);
-                    }
+                    token = Expect(lexer, TokenType.IDENTIFIER);
 
                     var id = token.Content;
 
@@ -254,7 +224,7 @@ public static class Parser {
             }
         }
 
-        lexer.Next();
+        Expect(lexer, TokenType.FN);
 
         return [.. result];
     }
