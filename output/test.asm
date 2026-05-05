@@ -112,6 +112,10 @@ macro printc chr {
     print rsp,1       ; syscall print the first character on the stack
     pop rax           ; restore the stack status
 }
+macro prints [chr*] {
+    forward
+    printc chr
+}
 ; program first
 main:
 mov R8, 1
@@ -119,19 +123,7 @@ mov R9, 5
   mov r15,10
   itoa r15,out_buf, out_len
   print out_buf, out_len
-printc 'H'
-printc 'e'
-printc 'l'
-printc 'l'
-printc 'o'
-printc ' '
-printc 'W'
-printc 'o'
-printc 'r'
-printc 'l'
-printc 'd'
-printc 10
-printc 13
+prints 'H','e','l','l','o',' ','W','o','r','l','d',10,13
 exit 0
 ; -----------------------------------------------------------
 segment readable writeable

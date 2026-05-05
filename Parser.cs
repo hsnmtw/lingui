@@ -120,6 +120,10 @@ public static class Parser {
                 print rsp,1       ; syscall print the first character on the stack
                 pop rax           ; restore the stack status
             }
+            macro prints [chr*] {
+                forward
+                printc chr
+            }
             """,
             ..ParseProgram(lexer),
             // "print newline,1",
@@ -215,14 +219,12 @@ public static class Parser {
                         result.Add("  print out_buf, out_len");
                     }
                     else if (token.Type == TokenType.STRING) {
-                        foreach (var chr in token.Content.Trim('"').ToCharArray()) {
-                            string c = chr switch {
-                                '\r' => "10",
-                                '\n' => "13",
-                                var other => $"'{other}'"
-                            };
-                            result.Add($"printc {c}");
-                        }
+                        string c = string.Join(",", token.Content.Trim('"').Select(chr => chr switch {
+                            '\r' => "10",
+                            '\n' => "13",
+                            var other => $"'{other}'"
+                        }));
+                        result.Add($"prints {c}");
                     }
                     else {
                         Logger.Error($"expected <identifier>|<number>|<string> at {lexer.FileName}:{lexer.Row}:{lexer.Column}, but got {token.Type}", fail:true);
