@@ -1,9 +1,22 @@
 program first
     fn main
-        var n = 1;
-        var a = 5;
+        var n = 71;
+        var a = 85;
 
         print 10;
         print "Hello World
 ";
+        print "a=";
+        print a;
+        print "
+";
+        input a;
+        print "a=";
+        print a;
+        print "
+";        
+        print "n=";
+        print n;
+        print "
+";        
     end fn

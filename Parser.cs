@@ -199,10 +199,11 @@ public static class Parser {
 
                     result.Add($"mov {register}, {token.Content}");
 
-                    Expect(lexer, TokenType.SEMI_COLON);
 
                 } break;
-                case TokenType.IDENTIFIER: break;
+                case TokenType.IDENTIFIER: {
+                    Logger.Error("NOT IMPLEMENTED !!");
+                } break;
                 case TokenType.PRINT: {
                     token = lexer.Next();
                     if (token is null) {
@@ -211,7 +212,11 @@ public static class Parser {
                     }
                     // identifier, number, string
                     if (token.Type == TokenType.IDENTIFIER) {
-                        
+                        if (!var_map.TryGetValue(token.Content, out var register) || string.IsNullOrEmpty(register)) {
+                            Logger.Error($"the identifier '{token.Content}' at {lexer.FileName}:{lexer.Row}:{lexer.Column}, was not decalred previously !", fail:true);
+                            return [];
+                        }
+                        result.Add($"print {register},100");
                     }
                     else if (token.Type == TokenType.NUMBER) {
                         result.Add($"  mov r15,{token.Content}");
@@ -229,15 +234,25 @@ public static class Parser {
                     else {
                         Logger.Error($"expected <identifier>|<number>|<string> at {lexer.FileName}:{lexer.Row}:{lexer.Column}, but got {token.Type}", fail:true);
                     }
-                    Expect(lexer, TokenType.SEMI_COLON);
 
                 } break;
-                case TokenType.INPUT: break;
+                case TokenType.INPUT: {
+                    // we expect an identifier after input, the identifier is a defined variable in the scope
+                    token = Expect(lexer, TokenType.IDENTIFIER);
+                    if (!var_map.TryGetValue(token.Content, out var register) || string.IsNullOrEmpty(register)) {
+                        Logger.Error($"the identifier '{token.Content}' at {lexer.FileName}:{lexer.Row}:{lexer.Column}, was not decalred previously !", fail:true);
+                        return [];
+                    }
+                    result.Add($"input out_buf, out_len");
+                    result.Add($"mov {register}, out_buf");
+                } break;
                 default : {
                     Logger.Error($"[123] unexpected token at {lexer.FileName}:{lexer.Row}:{lexer.Column}, got {token.Type} : '{token.Content}'", fail:true);
                     return [];
                 }
             }
+            Expect(lexer, TokenType.SEMI_COLON);
+
         }
 
         Expect(lexer, TokenType.FN);

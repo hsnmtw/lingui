@@ -118,12 +118,23 @@ macro prints [chr*] {
 }
 ; program first
 main:
-mov R8, 1
-mov R9, 5
+mov R8, 71
+mov R9, 85
   mov r15,10
   itoa r15,out_buf, out_len
   print out_buf, out_len
-prints 'H','e','l','l','o',' ','W','o','r','l','d',10,13
+    prints 'H','e','l','l','o',' ','W','o','r','l','d',10,13
+    prints 'a','='
+    print R9,1
+    prints 10,13
+    input out_buf, out_len
+    mov R9, out_buf
+    prints 'a','='
+    print R9,1
+    prints 10,13
+    prints 'n','='
+    print R8,1
+    prints 10,13
 exit 0
 ; -----------------------------------------------------------
 segment readable writeable
