@@ -4,4 +4,6 @@ program first
         var a = 5;
 
         print 10;
+        print "Hello World
+";
     end fn

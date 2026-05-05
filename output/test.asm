@@ -105,6 +105,13 @@ macro itoa src,_out_buf, _out_len {
     .done:
     ; -----------------------------------------------------------
 }
+; prints a single character
+macro printc chr {
+    mov rax, chr      ; move the character on rax register
+    push rax          ; push the character to the stack
+    print rsp,1       ; syscall print the first character on the stack
+    pop rax           ; restore the stack status
+}
 ; program first
 main:
 mov R8, 1
@@ -112,7 +119,19 @@ mov R9, 5
   mov r15,10
   itoa r15,out_buf, out_len
   print out_buf, out_len
-print newline,1
+printc 'H'
+printc 'e'
+printc 'l'
+printc 'l'
+printc 'o'
+printc ' '
+printc 'W'
+printc 'o'
+printc 'r'
+printc 'l'
+printc 'd'
+printc 10
+printc 13
 exit 0
 ; -----------------------------------------------------------
 segment readable writeable
