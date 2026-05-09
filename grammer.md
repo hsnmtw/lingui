@@ -38,7 +38,7 @@ BNF
 
 <instruction> ::= 
 
-    input <identifer>
+    input <string>, <identifer>
     |
     print <identifier>|<constant>
     ///[, <string>|<identifier>]*

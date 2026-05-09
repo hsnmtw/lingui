@@ -1,7 +1,8 @@
 namespace lingui;
 
+[Flags]
 public enum TokenType {
-    FN,
+    FN = 0,
     MODULE,
     STRING,
     NUMBER,
@@ -38,6 +39,13 @@ public record class Lexer (string FileName) {
     }
 
     private const char NEW_LINE = '\n';
+
+    public Token? Peek() {
+        int position = Position;
+        Token? token = Next();
+        Position = position;
+        return token;
+    }
 
     public Token? Next() {
         

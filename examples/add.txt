@@ -1,0 +1,13 @@
+module add
+    fn main
+        var a = 00;
+        var b = 00;
+        print "a=",a;
+        print "b=",b;
+        input "Enter a value for a=",a;
+        input "Enter a value for b=",b;
+        print "a=",a;
+        print "b=",b;
+        print "sum=",a+b;
+    end fn
+end module

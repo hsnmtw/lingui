@@ -3,20 +3,21 @@ using System.Collections.Specialized;
 namespace lingui;
 
 public interface INode {}
-public interface IInstruction : INode {}
-public interface IDeclaration : IInstruction {
+public interface IStatement : INode {}
+public interface IInstruction : IStatement {}
+public interface IDeclaration : IStatement {
     string Name { get; set; }
     string Value { get; set; }
 }
-public record struct Operation(string LHS, char Operand, string RHS) : IInstruction;
-public record struct Expression(string Constant, string Variable, Operation Operation) : IInstruction;
+public record struct Operation(string LHS, char Operand, string RHS) : INode;
+public record struct Expression(string Constant, string Variable, Operation Operation) : INode;
 public record struct Assignment(string Variable, Expression Expression) : IInstruction;
-public record struct Print(string Variable, string? Constant = default) : IInstruction;
-public record struct Input(string Variable) : IInstruction;
+public record struct Print(params string[]Values) : IInstruction;
+public record struct Input(string Message,string Variable) : IInstruction;
 public record struct Constant(string Name, string Value) : IDeclaration;
 public record struct Variable(string Name, string Value) : IDeclaration;
-public record struct Statement(IInstruction[] Instructions) : INode;
-public record struct Block(Statement[] Statements) : INode;
+// public record struct Statement(IInstruction[] Instructions) : INode;
+public record struct Block(IStatement[] Statements) : INode;
 public record struct Function(string Name, Constant[] Parameters, Block Block) : INode;
 public record struct Module(
     Function[] Functions,
@@ -27,7 +28,80 @@ public record struct Module(
 
 public record class Parser (Lexer Lexer) {
     public Module Parse() {
-        return new Module([],[],[]);
+        // assumes that a single file contains only one module
+        Expect(Lexer, TokenType.MODULE);
+        Expect(Lexer, TokenType.IDENTIFIER);
+        List<Function> functions = [];
+        List<Constant> constants = [];
+        List<Variable> variables = [];
+        Token? token = Lexer.Next();
+        while (token != null) {
+            switch (token.Type) {
+                case TokenType.FN: {
+                    var name = Expect(Lexer, TokenType.IDENTIFIER).Content;
+                    var statements = new List<IStatement>();
+                    while (token != null && !(token.Type == TokenType.END && Lexer.Peek()?.Type == TokenType.FN)) {                        
+                        token = Lexer.Next();
+                        if (token == null) break;
+                        if (token.Type == TokenType.VAR) {
+                            var var_name = Expect(Lexer, TokenType.IDENTIFIER).Content;
+                            Expect(Lexer, TokenType.EQUALS); // just ignore it
+                            var var_value = Expect(Lexer, TokenType.NUMBER|TokenType.STRING).Content;
+                            statements.Add(new Variable(var_name, var_value));
+                        }
+                        else if (token.Type == TokenType.PRINT) {
+                            var values = new List<string>();
+                            do {
+                                if (token.Type == TokenType.COMMA) Lexer.Next();
+                                token = Expect(Lexer, TokenType.IDENTIFIER|TokenType.NUMBER|TokenType.STRING);
+                                var var_value = token.Content;
+                                values.Add(var_value);
+                                token = Lexer.Peek();
+                            } while(token != null && token.Type == TokenType.COMMA);
+                            statements.Add(new Print([..values]));
+                        }
+                        else if (token.Type == TokenType.INPUT) {
+                            var var_message = Expect(Lexer, TokenType.STRING).Content;
+                            Expect(Lexer, TokenType.COMMA);
+                            var var_value = Expect(Lexer, TokenType.IDENTIFIER).Content;
+                            statements.Add(new Input(var_message,var_value));
+                        }
+                        // else if (token != null && token.Type != TokenType.SEMI_COLON) {
+                        //     Logger.Warning("UNKNOWN TOKEN '{0}' = '{1}'", token?.Type, token?.Content);
+                        // }
+                        token = Lexer.Next();
+                    }
+                    functions.Add(new Function(name,[], new Block([..statements])));
+                } break;
+                case TokenType.VAR: {
+                    var name = Expect(Lexer, TokenType.IDENTIFIER).Content;
+                    Expect(Lexer, TokenType.EQUALS);
+                    token = Expect(Lexer, TokenType.STRING|TokenType.NUMBER);
+                    var value = token.Content;
+                    variables.Add(new Variable(name,value));
+                } break;
+                // case TokenType.CONST: {} break;
+
+            }
+        }
+        return new Module(
+            Functions:[..functions],
+            Constants:[..constants],
+            Variables:[..variables]
+        );
+    }
+
+    private static Token Expect(Lexer lexer, TokenType type) {
+        Token? token = lexer.Next(); 
+        if (token is null) {
+            Logger.Error($"expected '{type}' at {lexer.FileName}:{lexer.Row}:{lexer.Column}, but reached end", fail:true);
+            throw new Exception();
+        }
+
+        if (!type.HasFlag(token.Type)) {
+            Logger.Error($"expected '{type}' at {lexer.FileName}:{lexer.Row}:{lexer.Column}, but got {token.Type} : '{token.Content}'", fail:true);
+        }
+        return token;
     }
 }
 

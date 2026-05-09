@@ -6,3 +6,4 @@ module first
         d = n * 2;
         print "the double of ", n, " is ", d;
     end fn
+end module

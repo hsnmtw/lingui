@@ -4,19 +4,13 @@ module first
         var a = 85;
 
         print 10;
-        print "Hello World
-";
-        print "a=";
-        print a;
-        print "
-";
-        input a;
-        print "a=";
-        print a;
-        print "
-";        
-        print "n=";
-        print n;
-        print "
-";        
+        print "Hello World";
+        print "a=",a;
+        print "n=",n;
+        
+        input "Enter a value for a=",a;
+        print "a=",a;
+        print "n=",n;
+          
     end fn
+end module

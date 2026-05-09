@@ -20,11 +20,11 @@ public static class Logger {
     
     
     public static void Info(string message, params object?[] args) {
-        Console.WriteLine("[{0}INF{1}] : '{2}'", GREEN, RESET, message);
+        Console.WriteLine("[{0}INF{1}] : '{2}'", GREEN, RESET, string.Format(message, args));
     }
 
     public static void Warning(string message, params object?[] args) {
-        Console.WriteLine("[{0}WRN{1}] : '{2}'", YELLOW, RESET, message);
+        Console.WriteLine("[{0}WRN{1}] : '{2}'", YELLOW, RESET, string.Format(message, args));
     }
 
 
