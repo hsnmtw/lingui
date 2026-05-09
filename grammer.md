@@ -20,9 +20,9 @@ BNF
 
     <declaration>
     |
-    <expression>
+    <assignment>
     |
-    <instrction>
+    <instruction>
 
 
 
@@ -48,7 +48,11 @@ BNF
     | 
     <string>
 
-<expression> ::=
+<assignment> ::=
 
-    <identifer> = <number>|<identifer> [[+|-|*|/] [<number>|<identifer>]]*
+    <lhs> = <rhs>
+
+<lhs> ::= <identifier>
+
+<rhs> ::= <number>|<identifer> [[+|-|*|/] [<number>|<identifer>]]*
 ```

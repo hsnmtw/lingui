@@ -1,8 +1,41 @@
+using System.Collections.Specialized;
+
 namespace lingui;
 
-public static class Parser {
+public interface INode {}
+public interface IInstruction : INode {}
+public interface IDeclaration : IInstruction {
+    string Name { get; set; }
+    string Value { get; set; }
+}
+public record struct Operation(string LHS, char Operand, string RHS) : IInstruction;
+public record struct Expression(string Constant, string Variable, Operation Operation) : IInstruction;
+public record struct Assignment(string Variable, Expression Expression) : IInstruction;
+public record struct Print(string Variable, string? Constant = default) : IInstruction;
+public record struct Input(string Variable) : IInstruction;
+public record struct Constant(string Name, string Value) : IDeclaration;
+public record struct Variable(string Name, string Value) : IDeclaration;
+public record struct Statement(IInstruction[] Instructions) : INode;
+public record struct Block(Statement[] Statements) : INode;
+public record struct Function(string Name, Constant[] Parameters, Block Block) : INode;
+public record struct Module(
+    Function[] Functions,
+    Constant[] Constants,
+    Variable[] Variables
+) : INode;
+
+
+public record class Parser (Lexer Lexer) {
+    public Module Parse() {
+        return new Module([],[],[]);
+    }
+}
+
+
+
+public static class DirectParser {
     public static string[] Parse(Lexer lexer) {
-        Expect(lexer, TokenType.PROGRAM);
+        Expect(lexer, TokenType.MODULE);
 
         return [
             "format ELF64 executable",

@@ -143,5 +143,6 @@ message_len  = $ - message
 ack:         db "Doubled: "
 ack_len      = $ - ack
 
-newline:     db 10
 
+
+newline:     db 10

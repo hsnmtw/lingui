@@ -2,7 +2,7 @@ namespace lingui;
 
 public enum TokenType {
     FN,
-    PROGRAM,
+    MODULE,
     STRING,
     NUMBER,
     VAR,
@@ -89,7 +89,7 @@ public record class Lexer (string FileName) {
         var type = TokenType.IDENTIFIER;
         
         if (content == "fn")      type = TokenType.FN       ;
-        if (content == "program") type = TokenType.PROGRAM  ;
+        if (content == "module")  type = TokenType.MODULE  ;
         if (IsString(content))    type = TokenType.STRING   ;
         if (IsNumber(content))    type = TokenType.NUMBER   ;
         if (content == "var")     type = TokenType.VAR      ;
